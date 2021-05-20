@@ -10,6 +10,7 @@ namespace CoreAPIAndEfCore.MapperConfig
         {
             CreateMap<Character, CharacterGetDto>();
             CreateMap<CharacterAddDto, Character>();
+            CreateMap<CharacterEditDto, Character>();
         }
     }
 }

@@ -37,10 +37,15 @@ namespace CoreAPIAndEfCore
             services.AddDbContext<DataContext>(x =>
             x.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
 
-            // RegisterServices(services);
             services.AddControllers();
-            // services.AddScoped<ICharacterservice, CharacterService>();
+            //  RegisterServices and AddNonGenericServices will register dependency using relection
+            //  so we dont need to register them every time.
+            // AddNonGenericServices won't work if you have generic implementation.
+
+            //  RegisterServices(services);
             services.AddNonGenericServices();
+            services.AddScoped(typeof(IDataValidation<>), typeof(DataValidation<>));
+
             services.AddAutoMapper(typeof(AutoMapperProfile));
         }
         private static void RegisterServices(IServiceCollection services)
@@ -64,8 +69,14 @@ namespace CoreAPIAndEfCore
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/local-development");
             }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
+
 
             app.UseHttpsRedirection();
 

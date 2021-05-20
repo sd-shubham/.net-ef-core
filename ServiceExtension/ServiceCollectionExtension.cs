@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreAPIAndEfCore.ServiceExtension
 {
+    // this implementation won't work if you have generic implementation
     public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddNonGenericServices(this IServiceCollection services)
@@ -14,7 +15,7 @@ namespace CoreAPIAndEfCore.ServiceExtension
             var types = scopedType
             .Assembly
             .GetExportedTypes()
-            .Where(t => t.IsClass && !t.IsAbstract)
+            .Where(t => t.IsClass && !t.IsAbstract && !t.IsGenericType)
             .Select(t => new
             {
                 Service = t.GetInterface($"I{t.Name}"),
