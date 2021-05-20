@@ -9,6 +9,7 @@ namespace CoreAPIAndEfCore.MapperConfig
         public AutoMapperProfile()
         {
             CreateMap<Character, CharacterGetDto>();
+            CreateMap<CharacterAddDto, Character>();
         }
     }
 }

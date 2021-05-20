@@ -9,5 +9,6 @@ namespace CoreAPIAndEfCore.Services
     {
 
         Task<IEnumerable<CharacterGetDto>> GetAllCharacter();
+        Task<CharacterAddDto> Create(CharacterAddDto character);
     }
 }

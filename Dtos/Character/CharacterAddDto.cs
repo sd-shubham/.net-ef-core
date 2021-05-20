@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using CoreAPIAndEfCore.Enum;
-namespace CoreAPIAndEfCore.Models
+
+namespace CoreAPIAndEfCore.Dtos
 {
-    public class Character
+    public class CharacterAddDto
     {
-        public int Id { get; set; }
-        [MaxLength(100)]
+        [Required(ErrorMessage = "name is requird")]
         public string Name { get; set; }
         public int HitPoints { get; set; }
         public int Strength { get; set; }
