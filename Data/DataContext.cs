@@ -10,5 +10,7 @@ namespace CoreAPIAndEfCore.Data
 
         }
         public DbSet<Character> characters { get; set; }
+        public DbSet<Uesr> Users { get; set; }
+        public DbSet<Weapon> Weapons { get; set; }
     }
 }

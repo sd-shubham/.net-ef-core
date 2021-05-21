@@ -1,10 +1,12 @@
 using CoreAPIAndEfCore.Dtos;
 using CoreAPIAndEfCore.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace CoreAPIAndEfCore.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CharacterController : ControllerBase

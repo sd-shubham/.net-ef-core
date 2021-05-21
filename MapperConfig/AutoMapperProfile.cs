@@ -8,9 +8,16 @@ namespace CoreAPIAndEfCore.MapperConfig
     {
         public AutoMapperProfile()
         {
+            // Character Map
             CreateMap<Character, CharacterGetDto>();
             CreateMap<CharacterAddDto, Character>();
             CreateMap<CharacterEditDto, Character>();
+            // User map
+            CreateMap<UserCreateDto, Uesr>();
+
+            // Weapon Map
+            CreateMap<WeaponAddDto, Weapon>();
+            CreateMap<Weapon, GetWeaponDto>();
         }
     }
 }

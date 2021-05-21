@@ -19,6 +19,10 @@ using Scrutor;
 using CoreAPIAndEfCore.ServiceExtension;
 using CoreAPIAndEfCore.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace CoreAPIAndEfCore
 {
@@ -45,8 +49,20 @@ namespace CoreAPIAndEfCore
             //  RegisterServices(services);
             services.AddNonGenericServices();
             services.AddScoped(typeof(IDataValidation<>), typeof(DataValidation<>));
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddAutoMapper(typeof(AutoMapperProfile));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(option =>
+            {
+                option.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                    .GetBytes(Configuration.GetSection("Appsettings:Token").Value)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
         }
         private static void RegisterServices(IServiceCollection services)
         {
@@ -81,6 +97,7 @@ namespace CoreAPIAndEfCore
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

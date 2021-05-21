@@ -11,5 +11,6 @@ namespace CoreAPIAndEfCore.Dtos
         public int Defense { get; set; }
         public int Intelligence { get; set; }
         public RpgType RpgType { get; set; }
+        public GetWeaponDto Weapon { get; set; }
     }
 }
