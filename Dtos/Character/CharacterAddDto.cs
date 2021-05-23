@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CoreAPIAndEfCore.Enum;
+using CoreAPIAndEfCore.MapperConfig;
+using CoreAPIAndEfCore.Models;
 
 namespace CoreAPIAndEfCore.Dtos
 {

@@ -57,23 +57,19 @@ namespace CoreAPIAndEfCore.Services
         }
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordsalt)
         {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordsalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
+            using var hmac = new System.Security.Cryptography.HMACSHA512();
+            passwordsalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         }
         private bool IsPasswordValid(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            using var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt);
+            var computeHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            for (int i = 0; i < computeHash.Length; i++)
             {
-                var computeHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computeHash.Length; i++)
-                {
-                    if (computeHash[i] != passwordHash[i]) return false;
-                }
-                return true;
+                if (computeHash[i] != passwordHash[i]) return false;
             }
+            return true;
         }
         private string GenerateToken(Uesr uesr)
         {

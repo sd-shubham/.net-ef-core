@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using CoreAPIAndEfCore.Dtos;
+using CoreAPIAndEfCore.MapperConfig;
 
 namespace CoreAPIAndEfCore.Models
 {
-    public class Uesr
+    public class Uesr : IMapFrom<UserCreateDto>
     {
         public int Id { get; set; }
         [MaxLength(150)]

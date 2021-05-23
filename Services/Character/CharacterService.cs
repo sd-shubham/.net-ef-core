@@ -8,6 +8,10 @@ using CoreAPIAndEfCore.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Resources;
+using System.Reflection;
+using CoreAPIAndEfCore.Common.CustomException;
+using AutoMapper.QueryableExtensions;
 
 namespace CoreAPIAndEfCore.Services
 {
@@ -20,8 +24,13 @@ namespace CoreAPIAndEfCore.Services
         public CharacterService(IMapper mapper, DataContext dbContext, IServiceContext serviceContext)
         => (_mapper, _dbContext, _serviceContext) = (mapper, dbContext, serviceContext);
         public async Task<IEnumerable<CharacterGetDto>> GetAllCharacter()
-        => _mapper.Map<IEnumerable<CharacterGetDto>>(await _dbContext.characters.Where(x => x.UserId == _serviceContext.UserId).AsNoTracking()
-        .ToListAsync());
+        {
+            var character = await _dbContext.characters.Include(w => w.Weapon).Include(w => w.CharacterSkills)
+                .ThenInclude(s => s.Skill).Where(x => x.UserId == _serviceContext.UserId).AsNoTracking()
+                .ProjectTo<CharacterGetDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+            return character;
+        }
 
         public async Task<CharacterGetDto> Create(CharacterAddDto characterAddDto)
         {
@@ -34,16 +43,15 @@ namespace CoreAPIAndEfCore.Services
         public async Task<CharacterGetDto> GetById(int id)
         {
             var character = await _dbContext.characters.FirstOrDefaultAsync(x => x.Id == id && x.UserId == _serviceContext.UserId);
-
             if (character is null)
-                throw new InvalidOperationException($"no record found with id {id}");
+                throw new RecordNotFoundException($"record can not be found with id : {id}", "character");
             return _mapper.Map<CharacterGetDto>(character);
         }
         public async Task<CharacterGetDto> Edit(CharacterEditDto characterDto)
         {
             var character = await _dbContext.characters.FirstOrDefaultAsync(x => x.Id == characterDto.Id && x.UserId == _serviceContext.UserId);
             if (character is null)
-                throw new InvalidOperationException($"no record found with id {characterDto.Id}");
+                throw new RecordNotFoundException($"no record found with id {characterDto.Id}");
             _mapper.Map(characterDto, character);
             await _dbContext.SaveChangesAsync();
             return _mapper.Map<CharacterGetDto>(character);
@@ -52,7 +60,7 @@ namespace CoreAPIAndEfCore.Services
         {
             var character = await _dbContext.characters.FirstOrDefaultAsync(x => x.Id == id && x.UserId == _serviceContext.UserId);
             if (character is null)
-                throw new InvalidOperationException($"no record found with id {id}");
+                throw new RecordNotFoundException($"no record found with id {id}");
             _dbContext.Remove(character);
             await _dbContext.SaveChangesAsync();
 

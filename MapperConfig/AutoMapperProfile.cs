@@ -1,23 +1,34 @@
 using AutoMapper;
-using CoreAPIAndEfCore.Dtos;
-using CoreAPIAndEfCore.Models;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace CoreAPIAndEfCore.MapperConfig
 {
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
+           => ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
+        
+        private void ApplyMappingsFromAssembly(Assembly assembly)
         {
-            // Character Map
-            CreateMap<Character, CharacterGetDto>();
-            CreateMap<CharacterAddDto, Character>();
-            CreateMap<CharacterEditDto, Character>();
-            // User map
-            CreateMap<UserCreateDto, Uesr>();
+            var types = assembly.GetExportedTypes()
+                .Where(t => t.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
+                    i.GetGenericTypeDefinition() == typeof(IMapFrom<>)))
+                .ToList();
 
-            // Weapon Map
-            CreateMap<WeaponAddDto, Weapon>();
-            CreateMap<Weapon, GetWeaponDto>();
+            foreach (var type in types)
+            {
+                var method = type.GetMethod("Mapping") ??
+                             type.GetInterface("IMapFrom`1")
+                                .GetMethod("Mapping");
+
+                var instance = Activator.CreateInstance(type);
+
+                method?.Invoke(instance, new object[] { this });
+            }
         }
+
     }
 }
