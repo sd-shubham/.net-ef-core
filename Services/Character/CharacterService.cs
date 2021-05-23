@@ -25,10 +25,11 @@ namespace CoreAPIAndEfCore.Services
         => (_mapper, _dbContext, _serviceContext) = (mapper, dbContext, serviceContext);
         public async Task<IEnumerable<CharacterGetDto>> GetAllCharacter()
         {
-            var character = await _dbContext.characters.Include(w => w.Weapon).Include(w => w.CharacterSkills)
-                .ThenInclude(s => s.Skill).Where(x => x.UserId == _serviceContext.UserId).AsNoTracking()
-                .ProjectTo<CharacterGetDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var query = _dbContext.characters.Include(w => w.Weapon).Include(w => w.CharacterSkills)
+                .ThenInclude(s => s.Skill);
+            var character =  _serviceContext.UserRole == "Admin" ? await query.ProjectTo<CharacterGetDto>(_mapper.ConfigurationProvider).ToListAsync() :
+                            await query.Where(x => x.UserId == _serviceContext.UserId).AsNoTracking()
+                           .ProjectTo<CharacterGetDto>(_mapper.ConfigurationProvider).ToListAsync();
             return character;
         }
 

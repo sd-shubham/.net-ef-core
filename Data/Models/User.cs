@@ -5,7 +5,7 @@ using CoreAPIAndEfCore.MapperConfig;
 
 namespace CoreAPIAndEfCore.Models
 {
-    public class Uesr : IMapFrom<UserCreateDto>
+    public class User : IMapFrom<UserCreateDto>
     {
         public int Id { get; set; }
         [MaxLength(150)]
@@ -13,5 +13,6 @@ namespace CoreAPIAndEfCore.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public IEnumerable<Character> Characters { get; set; }
+        public string Role { get; set; }
     }
 }

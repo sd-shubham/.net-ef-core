@@ -1,4 +1,6 @@
-﻿using CoreAPIAndEfCore.Common.CustomException;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using CoreAPIAndEfCore.Common.CustomException;
 using CoreAPIAndEfCore.Data;
 using CoreAPIAndEfCore.Dtos;
 using CoreAPIAndEfCore.Models;
@@ -13,8 +15,9 @@ namespace CoreAPIAndEfCore.Services
     public class AttackService : IAttackService
     {
         private readonly DataContext _dataContext;
+        private readonly IMapper _mapper;
 
-        public AttackService(DataContext dataContext) => _dataContext = dataContext;
+        public AttackService(DataContext dataContext,IMapper mapper) => (_dataContext,_mapper) = (dataContext, mapper);
 
         public async Task<FightResultDto> Fight(FightRequestDto requestDto)
         {
@@ -128,6 +131,13 @@ namespace CoreAPIAndEfCore.Services
             damage -= new Random().Next(opponent.Defense);
             if (damage > 0) opponent.HitPoints -= damage;
             return damage;
+        }
+        public async Task<IEnumerable<HighScoreDto>> GetHightScore()
+        {
+            var character = await _dataContext.characters.Where(f => f.Fights > 0)
+                            .OrderByDescending(c => c.Victories).ThenBy(c => c.Defeats)
+                            .ProjectTo<HighScoreDto>(_mapper.ConfigurationProvider).ToListAsync();
+            return character;
         }
     }
 }

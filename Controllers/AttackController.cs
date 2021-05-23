@@ -24,5 +24,8 @@ namespace CoreAPIAndEfCore.Controllers
         [HttpPost]
         public async Task<IActionResult> Fight(FightRequestDto attackDto)
           => Ok(await _attackerService.Fight(attackDto));
+        [HttpGet]
+        public async Task<IActionResult> Get()
+            => Ok(await _attackerService.GetHightScore());
     }
 }

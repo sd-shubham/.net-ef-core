@@ -5,5 +5,6 @@ namespace CoreAPIAndEfCore.Services
     public interface IServiceContext : IScopedService
     {
         public int UserId { get; }
+        public string UserRole { get; }
     }
 }

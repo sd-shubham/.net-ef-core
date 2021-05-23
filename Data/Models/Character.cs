@@ -18,7 +18,7 @@ namespace CoreAPIAndEfCore.Models
         public int Defense { get; set; }
         public int Intelligence { get; set; }
         public RpgType RpgType { get; set; }
-        public Uesr User { get; set; }
+        public User User { get; set; }
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public Weapon Weapon { get; set; }

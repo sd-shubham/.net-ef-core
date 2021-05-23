@@ -43,7 +43,7 @@ namespace CoreAPIAndEfCore.Services
             if (string.IsNullOrEmpty(userDto.Password) && string.IsNullOrEmpty(userDto.Name)) throw new ArgumentException("password required");
             if (await UserExists(userDto.Name)) throw new InvalidOperationException($"{userDto.Name} already Exists");
             CreatePasswordHash(userDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            var user = mapper.Map<Uesr>(userDto);
+            var user = mapper.Map<User>(userDto);
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             dataContext.Users.Add(user);
@@ -71,11 +71,12 @@ namespace CoreAPIAndEfCore.Services
             }
             return true;
         }
-        private string GenerateToken(Uesr uesr)
+        private string GenerateToken(User uesr)
         {
             List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.NameIdentifier,uesr.Id.ToString()),
-                new Claim(ClaimTypes.Name,uesr.Name)
+                new Claim(ClaimTypes.Name,uesr.Name),
+                new Claim(ClaimTypes.Role, uesr.Role)
             };
             SymmetricSecurityKey key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value)

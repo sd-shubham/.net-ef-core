@@ -13,5 +13,6 @@ namespace CoreAPIAndEfCore.Services
         }
         public int UserId => int.Parse(_httpContext.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+        public string UserRole => _httpContext.HttpContext.User.FindFirstValue(ClaimTypes.Role);
     }
 }
